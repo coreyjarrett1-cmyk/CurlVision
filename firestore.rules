@@ -1,0 +1,72 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /users/{userId} {
+      allow get, list: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      // Relaxed for prototype: Allow users to update their own profile fully (including role for testing)
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+
+      match /logs/{logId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+      
+      match /hairAnalyses/{analysisId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /hairstyles/{styleId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    match /creators/{creatorId} {
+      allow read: if true;
+      allow write: if isAdmin();
+      
+      match /reviews/{reviewId} {
+        allow read: if true;
+        allow create: if isSignedIn();
+        allow update, delete: if isOwner(resource.data.userId) || isAdmin();
+      }
+    }
+
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /forumPosts/{postId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner(resource.data.userId) || isAdmin();
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isSignedIn();
+        allow update, delete: if isOwner(resource.data.userId) || isAdmin();
+      }
+    }
+
+    match /feedback/{feedbackId} {
+      allow create: if true; // Allow anonymous feedback
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

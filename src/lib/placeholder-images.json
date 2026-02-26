@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-analysis",
+      "description": "Close up portrait of a woman with natural afro hair",
+      "imageUrl": "https://images.unsplash.com/photo-1763742936992-cac96be031b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuYXR1cmFsJTIwYWZybyUyMGhhaXJ8ZW58MHx8fHwxNzcxOTEzNTUyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "natural afro hair"
+    },
+    {
+      "id": "style-box-braids",
+      "description": "Woman with elegant box braids",
+      "imageUrl": "https://images.unsplash.com/photo-1610163653550-8e2ddaf42a69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxib3glMjBicmFpZHMlMjBoYWlyc3R5bGV8ZW58MHx8fHwxNzcxOTEzNTUyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "box braids hairstyle"
+    },
+    {
+      "id": "style-wash-and-go",
+      "description": "Defined wash and go curls",
+      "imageUrl": "https://images.unsplash.com/photo-1560264641-1b5191cc63e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjdXJseSUyMGhhaXIlMjB3YXNoJTIwYW5kJTIwZ298ZW58MHx8fHwxNzcxOTEzNTUyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "curly hair wash and go"
+    },
+    {
+      "id": "blog-hair-science",
+      "description": "Close up of hair follicles and texture",
+      "imageUrl": "https://images.unsplash.com/photo-1651488829549-a3cb88971044?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8aGFpciUyMHNjaWVuY2UlMjBtaWNyb3Njb3B5fGVufDB8fHx8MTc3MTkxMzU1Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hair science microscopy"
+    }
+  ]
+}

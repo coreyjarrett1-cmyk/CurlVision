@@ -1,0 +1,169 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Stores user hair profiles and access roles.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "curlPattern": { "type": "string" },
+        "porosity": { "type": "string" },
+        "density": { "type": "string" },
+        "onboardingComplete": { "type": "boolean" },
+        "phase2Complete": { "type": "boolean" },
+        "currentStyle": { "type": "string" },
+        "scalpConditions": { 
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "weeksInstalled": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "pro", "admin"], "default": "user" }
+      }
+    },
+    "CreatorProfile": {
+      "title": "CreatorProfile",
+      "description": "Profile for hair professionals like stylists, locticians, and barbers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["Stylist", "Loctician", "Barber", "Trichologist"] },
+        "bio": { "type": "string" },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "bookingUrl": { "type": "string", "format": "uri" },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "number" }
+      },
+      "required": ["id", "name", "role", "imageUrl"]
+    },
+    "ContentArticle": {
+      "title": "ContentArticle",
+      "description": "Blog posts and educational content.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "category": { "type": "string" },
+        "publishDate": { "type": "string", "format": "date-time" },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "content": { "type": "string" },
+        "excerpt": { "type": "string" }
+      },
+      "required": ["id", "title", "content"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "User reviews for hair professionals.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["creatorId", "userId", "rating"]
+    },
+    "HealthLog": {
+      "title": "Health Log",
+      "description": "Records of hair care activities and treatments.",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "status": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["type", "date"]
+    },
+    "ForumPost": {
+      "title": "Forum Post",
+      "description": "Community discussion posts.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string", "enum": ["Advice", "Inspiration", "Knowledge"] },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "upvotes": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "content", "category"]
+    },
+    "ForumComment": {
+      "title": "Forum Comment",
+      "description": "Comments on community posts.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "postId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["postId", "userId", "content"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "User feedback and ratings for the application.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "rating": { "type": "number" },
+        "usedToday": { "type": "array", "items": { "type": "string" } },
+        "feedbackText": { "type": "string" },
+        "route": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "rating"]
+    }
+  },
+  "auth": {
+    "providers": ["anonymous", "password", "google.com"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile data including roles."
+    },
+    "/users/{userId}/logs": {
+      "schema": "HealthLog",
+      "description": "A collection of hair health activity logs."
+    },
+    "/creators/{creatorId}": {
+      "schema": "CreatorProfile",
+      "description": "Public professional profiles."
+    },
+    "/articles/{articleId}": {
+      "schema": "ContentArticle",
+      "description": "Public blog articles."
+    },
+    "/creators/{creatorId}/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Reviews nested under creators."
+    },
+    "/forumPosts/{postId}": {
+      "schema": "ForumPost",
+      "description": "Public community forum posts."
+    },
+    "/forumPosts/{postId}/comments/{commentId}": {
+      "schema": "ForumComment",
+      "description": "Comments nested under forum posts."
+    },
+    "/feedback/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "App feedback submissions."
+    }
+  }
+}
