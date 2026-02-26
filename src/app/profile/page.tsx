@@ -2,7 +2,7 @@
 "use client"
 
 import { useState } from 'react';
-import { User, Mail, Shield, LogOut, Settings, Award, ChevronRight, Loader2, Sparkles, Flower2, Stars, ShieldCheck, RefreshCcw, MessageSquare, Check, Star as StarIcon } from 'lucide-react';
+import { User, Mail, Shield, LogOut, Settings, Award, ChevronRight, Loader2, Sparkles, Flower2, Stars, ShieldCheck, RefreshCcw, MessageSquare, Check, Star as StarIcon, Heart } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -386,9 +386,15 @@ export default function ProfilePage() {
               <span className="text-sm font-medium italic">Sign out</span>
             </div>
           </Button>
+
+          <div className="pt-8 pb-4 text-center">
+            <p className="text-[11px] text-muted-foreground italic leading-relaxed px-6">
+              Thank you for being a part of the CurlVision circle. Your commitment to your crown inspires this entire sanctuary.
+            </p>
+          </div>
         </section>
 
-        <footer className="text-center pt-8 pb-12">
+        <footer className="text-center pt-4 pb-12">
           <Flower2 className="w-4 h-4 text-primary mx-auto mb-2 opacity-30" />
           <p className="text-[10px] text-muted-foreground uppercase tracking-widest italic">CurlVision v1.0.5</p>
           <p className="text-[9px] text-muted-foreground mt-1 opacity-50 italic">"Be still, and let your hair speak."</p>
