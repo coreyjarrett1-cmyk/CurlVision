@@ -90,9 +90,6 @@ The UI uses intentional, culturally grounded language throughout:
 
 **Phase 1 — Launch:** All features free. Revenue from affiliate links and sponsored posts (FTC-compliant).
 
-**Phase 2 — Pro Tier:** Paid subscriptions for licensed professionals ($15–30/mo) adding analytics, priority directory placement, and client tracking tools. Nothing that was free ever gets locked behind a paywall.
-
-**Phase 3 — Future:** B2C "Plus" tier for power users, expanded B2B tools for stylists.
 
 ---
 
