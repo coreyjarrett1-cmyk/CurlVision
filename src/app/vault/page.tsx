@@ -21,7 +21,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
-// Constants for editing
 const HAIRSTYLE_CATEGORIES = [
   { name: 'Protective Styles', styles: ['Box Braids', 'Cornrows', 'Twists', 'Wig/Weave', 'Crochet'] },
   { name: 'Natural/Free Styles', styles: ['Afro', 'TWA (Teeny Weeny Afro)', 'Wash and Go', 'Twist Out', 'Bantu Knots', 'Freeform Locs'] },
@@ -267,7 +266,6 @@ export default function VaultPage() {
         </main>
       </AuthGate>
 
-      {/* Edit Info Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-md bg-background border-white/10 p-0 overflow-hidden h-[85vh] flex flex-col">
           <DialogHeader className="p-6 pb-2">
@@ -339,7 +337,6 @@ export default function VaultPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Date Picker Dialog */}
       <Dialog open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
         <DialogContent className="max-w-sm bg-background border-white/10 p-6">
           <DialogHeader>
@@ -403,7 +400,6 @@ export default function VaultPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="bg-background border-white/10">
           <AlertDialogHeader>

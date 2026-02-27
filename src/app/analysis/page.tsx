@@ -19,7 +19,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Link from 'next/link';
 
-// Hairstyle categories consistent with onboarding
 const HAIRSTYLE_CATEGORIES = [
   {
     name: 'Protective Styles',
@@ -88,7 +87,7 @@ export default function AnalysisPage() {
   const { user } = useUser();
   const db = useFirestore();
   
-  const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0); // 0: Capture, 1: Style, 2: Duration, 3: Scalp, 4: Success
+  const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0);
   const [isSaving, setIsSaving] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -486,7 +485,6 @@ export default function AnalysisPage() {
         )}
       </main>
 
-      {/* Manual Date Picker Dialog */}
       <Dialog open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
         <DialogContent className="max-w-sm bg-background border-white/10 p-6">
           <DialogHeader>

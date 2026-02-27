@@ -32,7 +32,6 @@ export default function ProfilePage() {
   const [isPromoting, setIsPromoting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   
-  // Feedback state
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -258,7 +257,6 @@ export default function ProfilePage() {
           </Card>
         )}
 
-        {/* Temporary Developer Button to test RBAC */}
         {!userProfile?.role && !isUserLoading && (
           <Button 
             variant="outline" 
@@ -387,10 +385,14 @@ export default function ProfilePage() {
             </div>
           </Button>
 
-          <div className="pt-8 pb-4 text-center">
+          <div className="pt-8 pb-4 text-center space-y-4">
             <p className="text-[11px] text-muted-foreground italic leading-relaxed px-6">
               Thank you for being a part of the CurlVision circle. Your commitment to your crown inspires this entire sanctuary.
             </p>
+            <div className="flex items-center justify-center gap-2 text-primary opacity-60">
+              <Heart className="w-3 h-3 fill-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-widest italic">Thank you for sharing your light</span>
+            </div>
           </div>
         </section>
 

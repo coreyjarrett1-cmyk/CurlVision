@@ -628,7 +628,6 @@ export default function RootDashboard() {
         </section>
       </main>
 
-      {/* Onboarding Quiz */}
       <Dialog open={showQuiz} onOpenChange={(open) => { if (!isSubmitting) setShowQuiz(open) }}>
         <DialogContent className="max-w-md bg-background border-white/10 p-0 overflow-hidden h-[85vh] flex flex-col">
           <DialogHeader className="p-6 pb-2">
@@ -762,7 +761,6 @@ export default function RootDashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Phase 2 Invitation Dialog */}
       <Dialog open={showPhase2Invitation} onOpenChange={setShowPhase2Invitation}>
         <DialogContent className="max-w-md bg-background border-white/10 p-6 text-center space-y-6">
           <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 shadow-2xl">
@@ -786,7 +784,6 @@ export default function RootDashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Phase 2 Quiz Dialog */}
       <Dialog open={showPhase2Quiz} onOpenChange={(open) => { if (!isSubmitting) setShowPhase2Quiz(open) }}>
         <DialogContent className="max-w-md bg-background border-white/10 p-0 overflow-hidden h-[85vh] flex flex-col">
           <DialogHeader className="p-6 pb-2">
@@ -848,7 +845,6 @@ export default function RootDashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Updated Crown Dialog (Text-Only Update) */}
       <Dialog open={showUpdateCrown} onOpenChange={(open) => { if (!isSubmitting) setShowUpdateCrown(open) }}>
         <DialogContent className="max-w-md bg-background border-white/10 p-0 overflow-hidden h-[85vh] flex flex-col">
           <DialogHeader className="p-6 pb-2">
