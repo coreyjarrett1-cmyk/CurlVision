@@ -16,11 +16,15 @@ service cloud.firestore {
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    function isNotChangingRole() {
+      return !('role' in request.resource.data) || 
+             request.resource.data.role == resource.data.role;
+    }
+
     match /users/{userId} {
       allow get, list: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId);
-      // Relaxed for prototype: Allow users to update their own profile fully (including role for testing)
-      allow update: if isOwner(userId) || isAdmin();
+      allow update: if (isOwner(userId) && isNotChangingRole()) || isAdmin();
       allow delete: if isAdmin();
 
       match /logs/{logId} {
