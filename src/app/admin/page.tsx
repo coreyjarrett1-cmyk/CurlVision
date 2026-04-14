@@ -32,7 +32,7 @@ export default function AdminDashboard() {
 
   const { data: users, isLoading } = useCollection(usersQuery);
 
-  const handleToggleRole = async (userId: string, currentRole: string, targetRole: 'pro' | 'user') => {
+  const handleToggleRole = async (userId: string, currentRole: string, targetRole: 'pro' | 'user' | 'admin') => {
     if (!db) return;
     setUpdatingId(userId);
     const newRole = currentRole === targetRole ? 'user' : targetRole;
