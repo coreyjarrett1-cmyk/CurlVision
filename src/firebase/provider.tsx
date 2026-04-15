@@ -5,6 +5,8 @@ import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged, getRedirectResult } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
+import { FirebaseAuthErrorToast } from '@/components/FirebaseAuthErrorToast';
+import { errorEmitter } from '@/firebase/error-emitter';
 
 interface FirebaseProviderProps {
   children: ReactNode;
@@ -98,6 +100,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       .catch((error) => {
         // Non-fatal: onAuthStateChanged will still reflect the final state when possible.
         console.error("FirebaseProvider: getRedirectResult error:", error);
+        errorEmitter.emit('auth-error', { code: error?.code, message: error?.message });
       })
       .finally(() => {
         if (typeof window !== 'undefined') sessionStorage.removeItem('cv_auth_redirect_in_progress');
@@ -121,6 +124,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   return (
     <FirebaseContext.Provider value={contextValue}>
       <FirebaseErrorListener />
+      <FirebaseAuthErrorToast />
       {children}
     </FirebaseContext.Provider>
   );
