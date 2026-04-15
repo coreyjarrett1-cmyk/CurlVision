@@ -3,7 +3,7 @@
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged } from 'firebase/auth';
+import { Auth, User, onAuthStateChanged, getRedirectResult } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
 
 interface FirebaseProviderProps {
@@ -88,6 +88,17 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     );
     return () => unsubscribe(); // Cleanup
   }, [auth]); // Depends on the auth instance
+
+  // Redirect-based auth (signInWithRedirect/linkWithRedirect) completes via getRedirectResult().
+  // If we don't call this at least once after returning from the provider, sign-in/linking may
+  // appear to "do nothing" on the client.
+  useEffect(() => {
+    if (!auth) return;
+    getRedirectResult(auth).catch((error) => {
+      // Non-fatal: onAuthStateChanged will still reflect the final state when possible.
+      console.error("FirebaseProvider: getRedirectResult error:", error);
+    });
+  }, [auth]);
 
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {
