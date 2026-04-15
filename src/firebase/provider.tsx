@@ -96,7 +96,21 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   // appear to "do nothing" on the client.
   useEffect(() => {
     if (!auth) return;
+    const hadRedirectFlag =
+      typeof window !== 'undefined' && sessionStorage.getItem('cv_auth_redirect_in_progress') === '1';
+
     getRedirectResult(auth)
+      .then((result) => {
+        if (!result && hadRedirectFlag) {
+          // We expected a redirect result, but Firebase didn't provide one.
+          // This usually points to an Auth configuration or storage/cookie issue.
+          errorEmitter.emit('auth-error', {
+            code: 'auth/redirect-no-result',
+            message:
+              'Google redirect returned, but Firebase produced no sign-in result. Check Firebase Auth authorized domains and browser storage/cookie settings.',
+          });
+        }
+      })
       .catch((error) => {
         // Non-fatal: onAuthStateChanged will still reflect the final state when possible.
         console.error("FirebaseProvider: getRedirectResult error:", error);
