@@ -107,6 +107,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
           errorEmitter.emit('auth-error', {
             code: 'auth/redirect-no-result',
             message: [
+              'cv-debug=redirect-no-result-v2',
               'Google redirect returned, but Firebase produced no sign-in result.',
               `origin=${typeof window !== 'undefined' ? window.location.origin : 'unknown'}`,
               `projectId=${(firebaseApp as any)?.options?.projectId || 'unknown'}`,
