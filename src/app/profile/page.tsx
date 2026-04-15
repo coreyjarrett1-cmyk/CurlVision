@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useUser, useAuth, useFirestore, useMemoFirebase, useDoc, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { signOut, GoogleAuthProvider, linkWithPopup, signInWithPopup } from 'firebase/auth';
+import { signOut, GoogleAuthProvider, linkWithRedirect, signInWithRedirect } from 'firebase/auth';
 import { doc, updateDoc, collection, query, getDocs, deleteDoc, setDoc, serverTimestamp, addDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -100,22 +100,22 @@ export default function ProfilePage() {
     try {
       if (user.isAnonymous) {
         try {
-          await linkWithPopup(user, provider);
+          await linkWithRedirect(user, provider);
           toast({ title: "Account Linked", description: "Your journey is now anchored to your Google account." });
         } catch (linkError: any) {
           if (linkError.code === 'auth/credential-already-in-use') {
-            await signInWithPopup(auth, provider);
+            await signInWithRedirect(auth, provider);
             toast({ title: "Welcome back", description: "We found your existing account; you are now reunited." });
           } else {
             toast({ variant: 'destructive', title: "Sync failed", description: "Could not link your account." });
           }
         }
       } else {
-        await signInWithPopup(auth, provider);
+        await signInWithRedirect(auth, provider);
         toast({ title: "Welcome back", description: "Your journey has been reunited." });
       }
     } catch (error: any) {
-      if (error.code !== 'auth/cancelled-popup-request') {
+      if (error.code !== 'auth/redirect-cancelled-by-user') {
         toast({ variant: 'destructive', title: "Login failed", description: "We couldn't sign you in right now." });
       }
     } finally {
