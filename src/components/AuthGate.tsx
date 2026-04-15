@@ -56,12 +56,19 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
         await signInWithPopup(auth, provider);
       }
     } catch (error: any) {
-      if (error.code === 'auth/credential-already-in-use') {
-        // If the Google account is already used, we have to sign in with it
-        await signInWithPopup(auth, provider);
-        toast({ title: "Welcome back", description: "Signed in to your existing account." });
+      if (
+        error.code === 'auth/credential-already-in-use' ||
+        error.code === 'auth/account-exists-with-different-credential'
+      ) {
+        // Google account already tied to an existing account — sign in directly
+        try {
+          await signInWithPopup(auth, provider);
+          toast({ title: "Welcome back", description: "Signed in to your existing account." });
+        } catch (innerError: any) {
+          toast({ variant: 'destructive', title: "Login failed", description: innerError.code || innerError.message });
+        }
       } else {
-        toast({ variant: 'destructive', title: "Auth failed", description: "Please try again." });
+        toast({ variant: 'destructive', title: "Login failed", description: error.code || error.message || "We couldn't sign you in right now." });
       }
     } finally {
       setIsLoading(false);
