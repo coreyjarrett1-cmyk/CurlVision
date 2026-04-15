@@ -106,8 +106,13 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
           // This usually points to an Auth configuration or storage/cookie issue.
           errorEmitter.emit('auth-error', {
             code: 'auth/redirect-no-result',
-            message:
-              'Google redirect returned, but Firebase produced no sign-in result. Check Firebase Auth authorized domains and browser storage/cookie settings.',
+            message: [
+              'Google redirect returned, but Firebase produced no sign-in result.',
+              `origin=${typeof window !== 'undefined' ? window.location.origin : 'unknown'}`,
+              `projectId=${(firebaseApp as any)?.options?.projectId || 'unknown'}`,
+              `authDomain=${(firebaseApp as any)?.options?.authDomain || 'unknown'}`,
+              'Check Firebase Auth authorized domains for the *origin above*, and ensure storage/cookies are allowed.',
+            ].join(' '),
           });
         }
       })
@@ -138,7 +143,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       .finally(() => {
         if (typeof window !== 'undefined') sessionStorage.removeItem('cv_auth_redirect_in_progress');
       });
-  }, [auth]);
+  }, [auth, firebaseApp]);
 
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {
