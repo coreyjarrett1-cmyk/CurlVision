@@ -257,17 +257,7 @@ export default function ProfilePage() {
           </Card>
         )}
 
-        {!userProfile?.role && !isUserLoading && (
-          <Button 
-            variant="outline" 
-            className="w-full border-dashed border-primary/30 text-primary text-xs italic opacity-50 hover:opacity-100"
-            onClick={handlePromoteToAdmin}
-            disabled={isPromoting}
-          >
-            {isPromoting ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <ShieldCheck className="w-3 h-3 mr-2" />}
-            (Dev) Become Village Elder
-          </Button>
-        )}
+
 
         <section className="space-y-4">
           <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground border-b border-white/5 pb-2 italic">Spirit Stats</h3>
