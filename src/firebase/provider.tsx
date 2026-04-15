@@ -3,10 +3,9 @@
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged, getRedirectResult, signInWithCredential } from 'firebase/auth';
+import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
 import { FirebaseAuthErrorToast } from '@/components/FirebaseAuthErrorToast';
-import { errorEmitter } from '@/firebase/error-emitter';
 
 interface FirebaseProviderProps {
   children: ReactNode;
@@ -91,60 +90,6 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     return () => unsubscribe(); // Cleanup
   }, [auth]); // Depends on the auth instance
 
-  // Redirect-based auth (signInWithRedirect/linkWithRedirect) completes via getRedirectResult().
-  // If we don't call this at least once after returning from the provider, sign-in/linking may
-  // appear to "do nothing" on the client.
-  useEffect(() => {
-    if (!auth) return;
-    const hadRedirectFlag =
-      typeof window !== 'undefined' && sessionStorage.getItem('cv_auth_redirect_in_progress') === '1';
-
-    getRedirectResult(auth)
-      .then((result) => {
-        if (!result && hadRedirectFlag) {
-          // We expected a redirect result, but Firebase didn't provide one.
-          // This usually points to an Auth configuration or storage/cookie issue.
-          errorEmitter.emit('auth-error', {
-            code: 'auth/redirect-no-result',
-            message: [
-              'cv-debug=redirect-no-result-v2',
-              'Google redirect returned, but Firebase produced no sign-in result.',
-              `origin=${typeof window !== 'undefined' ? window.location.origin : 'unknown'}`,
-              `projectId=${(firebaseApp as any)?.options?.projectId || 'unknown'}`,
-              `authDomain=${(firebaseApp as any)?.options?.authDomain || 'unknown'}`,
-              'Check Firebase Auth authorized domains for the *origin above*, and ensure storage/cookies are allowed.',
-            ].join(' '),
-          });
-        }
-      })
-      .catch((error) => {
-        // Non-fatal: onAuthStateChanged will still reflect the final state when possible.
-        console.error("FirebaseProvider: getRedirectResult error:", error);
-        // When upgrading an anonymous session via linkWithRedirect(), existing accounts will fail with:
-        // - auth/credential-already-in-use
-        // - auth/account-exists-with-different-credential
-        // In popup flows we handled this immediately; in redirect flows it only shows up here.
-        const code = error?.code as string | undefined;
-        const credential = error?.credential;
-
-        if (
-          credential &&
-          (code === 'auth/credential-already-in-use' || code === 'auth/account-exists-with-different-credential')
-        ) {
-          signInWithCredential(auth, credential)
-            .catch((signInError) => {
-              console.error("FirebaseProvider: signInWithCredential after redirect error:", signInError);
-              errorEmitter.emit('auth-error', { code: signInError?.code, message: signInError?.message });
-            });
-          return;
-        }
-
-        errorEmitter.emit('auth-error', { code, message: error?.message });
-      })
-      .finally(() => {
-        if (typeof window !== 'undefined') sessionStorage.removeItem('cv_auth_redirect_in_progress');
-      });
-  }, [auth, firebaseApp]);
 
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {

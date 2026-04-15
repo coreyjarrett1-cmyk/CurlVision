@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useUser, useAuth, useFirestore, useMemoFirebase, useDoc, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { signOut, GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
+import { signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, updateDoc, collection, query, getDocs, deleteDoc, setDoc, serverTimestamp, addDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -96,15 +96,11 @@ export default function ProfilePage() {
     if (!user || !auth) return;
     setIsLoggingIn(true);
     const provider = new GoogleAuthProvider();
-    
     try {
-      // Prevent auto-anon sign-in flows from racing the redirect return.
-      if (typeof window !== 'undefined') sessionStorage.setItem('cv_auth_redirect_in_progress', '1');
-      // Use direct sign-in to avoid anonymous-link redirect conflicts on existing accounts.
-      await signInWithRedirect(auth, provider);
+      await signInWithPopup(auth, provider);
       toast({ title: "Welcome back", description: "Your journey has been reunited." });
     } catch (error: any) {
-      if (error.code !== 'auth/redirect-cancelled-by-user') {
+      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
         toast({ variant: 'destructive', title: "Login failed", description: "We couldn't sign you in right now." });
       }
     } finally {

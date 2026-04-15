@@ -3,11 +3,11 @@
 
 import { useState } from 'react';
 import { useUser, useAuth } from '@/firebase';
-import { 
-  GoogleAuthProvider, 
-  signInWithRedirect, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   EmailAuthProvider,
   linkWithCredential
 } from 'firebase/auth';
@@ -46,12 +46,9 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      // Prevent auto-anon sign-in flows from racing the redirect return.
-      if (typeof window !== 'undefined') sessionStorage.setItem('cv_auth_redirect_in_progress', '1');
-      // Use direct sign-in to avoid anonymous-link redirect conflicts on existing accounts.
-      await signInWithRedirect(auth, provider);
+      await signInWithPopup(auth, provider);
     } catch (error: any) {
-      if (error.code !== 'auth/redirect-cancelled-by-user') {
+      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
         toast({ variant: 'destructive', title: "Login failed", description: error.code || error.message || "We couldn't sign you in right now." });
       }
     } finally {
