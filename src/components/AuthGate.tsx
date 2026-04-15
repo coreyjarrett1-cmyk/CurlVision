@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useUser, useAuth } from '@/firebase';
 import { 
   GoogleAuthProvider, 
-  linkWithRedirect, 
   signInWithRedirect, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -49,27 +48,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     try {
       // Prevent auto-anon sign-in flows from racing the redirect return.
       if (typeof window !== 'undefined') sessionStorage.setItem('cv_auth_redirect_in_progress', '1');
-      if (user?.isAnonymous) {
-        // Upgrade anonymous session to Google account, preserving UID + Firestore data
-        try {
-          await linkWithRedirect(user, provider);
-          toast({ title: "Journey Secured", description: "Your anonymous profile is now permanent." });
-        } catch (linkError: any) {
-          if (
-            linkError.code === 'auth/credential-already-in-use' ||
-            linkError.code === 'auth/account-exists-with-different-credential'
-          ) {
-            // Google account already has a Firebase account — sign in directly
-            await signInWithRedirect(auth, provider);
-            toast({ title: "Welcome back", description: "Signed in to your existing account." });
-          } else {
-            toast({ variant: 'destructive', title: "Login failed", description: linkError.code || linkError.message });
-          }
-        }
-      } else {
-        // No user or already signed in — go straight to Google sign-in
-        await signInWithRedirect(auth, provider);
-      }
+      // Use direct sign-in to avoid anonymous-link redirect conflicts on existing accounts.
+      await signInWithRedirect(auth, provider);
     } catch (error: any) {
       if (error.code !== 'auth/redirect-cancelled-by-user') {
         toast({ variant: 'destructive', title: "Login failed", description: error.code || error.message || "We couldn't sign you in right now." });
