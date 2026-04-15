@@ -3,7 +3,7 @@
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged, getRedirectResult } from 'firebase/auth';
+import { Auth, User, onAuthStateChanged, getRedirectResult, signInWithCredential } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
 import { FirebaseAuthErrorToast } from '@/components/FirebaseAuthErrorToast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -114,7 +114,26 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       .catch((error) => {
         // Non-fatal: onAuthStateChanged will still reflect the final state when possible.
         console.error("FirebaseProvider: getRedirectResult error:", error);
-        errorEmitter.emit('auth-error', { code: error?.code, message: error?.message });
+        // When upgrading an anonymous session via linkWithRedirect(), existing accounts will fail with:
+        // - auth/credential-already-in-use
+        // - auth/account-exists-with-different-credential
+        // In popup flows we handled this immediately; in redirect flows it only shows up here.
+        const code = error?.code as string | undefined;
+        const credential = error?.credential;
+
+        if (
+          credential &&
+          (code === 'auth/credential-already-in-use' || code === 'auth/account-exists-with-different-credential')
+        ) {
+          signInWithCredential(auth, credential)
+            .catch((signInError) => {
+              console.error("FirebaseProvider: signInWithCredential after redirect error:", signInError);
+              errorEmitter.emit('auth-error', { code: signInError?.code, message: signInError?.message });
+            });
+          return;
+        }
+
+        errorEmitter.emit('auth-error', { code, message: error?.message });
       })
       .finally(() => {
         if (typeof window !== 'undefined') sessionStorage.removeItem('cv_auth_redirect_in_progress');
