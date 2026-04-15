@@ -43,31 +43,33 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   }
 
   const handleGoogleSignIn = async () => {
-    if (!auth || !user) return;
+    if (!auth) return;
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      if (user.isAnonymous) {
-        // This links the current anonymous session to the Google account
-        // preserving the UID and Firestore data
-        await linkWithPopup(user, provider);
-        toast({ title: "Journey Secured", description: "Your anonymous profile is now permanent." });
+      if (user?.isAnonymous) {
+        // Upgrade anonymous session to Google account, preserving UID + Firestore data
+        try {
+          await linkWithPopup(user, provider);
+          toast({ title: "Journey Secured", description: "Your anonymous profile is now permanent." });
+        } catch (linkError: any) {
+          if (
+            linkError.code === 'auth/credential-already-in-use' ||
+            linkError.code === 'auth/account-exists-with-different-credential'
+          ) {
+            // Google account already has a Firebase account — sign in directly
+            await signInWithPopup(auth, provider);
+            toast({ title: "Welcome back", description: "Signed in to your existing account." });
+          } else {
+            toast({ variant: 'destructive', title: "Login failed", description: linkError.code || linkError.message });
+          }
+        }
       } else {
+        // No user or already signed in — go straight to Google sign-in
         await signInWithPopup(auth, provider);
       }
     } catch (error: any) {
-      if (
-        error.code === 'auth/credential-already-in-use' ||
-        error.code === 'auth/account-exists-with-different-credential'
-      ) {
-        // Google account already tied to an existing account — sign in directly
-        try {
-          await signInWithPopup(auth, provider);
-          toast({ title: "Welcome back", description: "Signed in to your existing account." });
-        } catch (innerError: any) {
-          toast({ variant: 'destructive', title: "Login failed", description: innerError.code || innerError.message });
-        }
-      } else {
+      if (error.code !== 'auth/cancelled-popup-request' && error.code !== 'auth/popup-closed-by-user') {
         toast({ variant: 'destructive', title: "Login failed", description: error.code || error.message || "We couldn't sign you in right now." });
       }
     } finally {
