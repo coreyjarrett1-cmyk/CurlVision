@@ -98,6 +98,8 @@ export default function ProfilePage() {
     const provider = new GoogleAuthProvider();
     
     try {
+      // Prevent auto-anon sign-in flows from racing the redirect return.
+      if (typeof window !== 'undefined') sessionStorage.setItem('cv_auth_redirect_in_progress', '1');
       if (user.isAnonymous) {
         try {
           await linkWithRedirect(user, provider);

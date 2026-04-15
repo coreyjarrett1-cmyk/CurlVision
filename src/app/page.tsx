@@ -113,7 +113,12 @@ export default function RootDashboard() {
   }, []);
 
   useEffect(() => {
-    if (!isUserLoading && !user && auth) {
+    if (
+      !isUserLoading &&
+      !user &&
+      auth &&
+      !(typeof window !== 'undefined' && sessionStorage.getItem('cv_auth_redirect_in_progress') === '1')
+    ) {
       initiateAnonymousSignIn(auth);
     }
 

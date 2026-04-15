@@ -94,10 +94,14 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   // appear to "do nothing" on the client.
   useEffect(() => {
     if (!auth) return;
-    getRedirectResult(auth).catch((error) => {
-      // Non-fatal: onAuthStateChanged will still reflect the final state when possible.
-      console.error("FirebaseProvider: getRedirectResult error:", error);
-    });
+    getRedirectResult(auth)
+      .catch((error) => {
+        // Non-fatal: onAuthStateChanged will still reflect the final state when possible.
+        console.error("FirebaseProvider: getRedirectResult error:", error);
+      })
+      .finally(() => {
+        if (typeof window !== 'undefined') sessionStorage.removeItem('cv_auth_redirect_in_progress');
+      });
   }, [auth]);
 
   // Memoize the context value

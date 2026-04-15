@@ -47,6 +47,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
     try {
+      // Prevent auto-anon sign-in flows from racing the redirect return.
+      if (typeof window !== 'undefined') sessionStorage.setItem('cv_auth_redirect_in_progress', '1');
       if (user?.isAnonymous) {
         // Upgrade anonymous session to Google account, preserving UID + Firestore data
         try {
